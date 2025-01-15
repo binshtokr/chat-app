@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import io from "socket.io-client";
 import "./App.css"; // Assuming you have a CSS file for styling
+import axios from "axios";
 
 const socket = io.connect("http://localhost:3001");
 
@@ -39,7 +40,6 @@ function App() {
     if (room !== "") {
       socket.emit("join_room", room);
     }
- 
   };
 
   return (
@@ -68,7 +68,6 @@ function App() {
             {msg.text}
           </div>
         ))}
-        
       </div>
       <form onSubmit={sendMessage} className="message-form">
         <input
@@ -78,6 +77,7 @@ function App() {
         />
         <button type="submit">Send</button>
       </form>
+      {/*       {number} */}
     </div>
   );
 }
