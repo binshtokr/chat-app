@@ -1,14 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import "./App.css"; // Assuming you have a CSS file for styling
 import axios from "axios";
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect("https://familychat-app.vercel.app");
 
 function App() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [room, setRoom] = useState("");
+  const [apiData, setApiData] = useState("");
+  const apiUrl = "https://familychat-app.vercel.app/api/data";
+  const myPromise = new Promise((resolve, reject) => {
+    axios
+      .get(apiUrl) // Der URL muss korrekt definiert sein
+      .then((res) => {
+        const data = res.data;
+        resolve(data); // Erfolg, Daten zurückgeben
+      })
+      .catch((err) => {
+        reject("promise err", err); // Fehler, Fehler zurückgeben
+      });
+  });
+
+  const getMessages = async () => {
+    try {
+      const response = await myPromise;
+      console.log("response", response);
+      setApiData(response.msg);
+    } catch (error) {
+      console.error("error", error);
+      setApiData("Error occurred");
+    }
+  };
+
+  useEffect(() => {
+    getMessages();
+  }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
@@ -44,6 +72,8 @@ function App() {
 
   return (
     <div className="chat-container">
+      <h1>Api Data</h1>
+      <p>{apiData ? apiData : "Loading..."}</p>
       <h1>Room</h1>
 
       <form onSubmit={joinRoom} className="message-form">
