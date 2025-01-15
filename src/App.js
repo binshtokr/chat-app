@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import "./App.css"; // Assuming you have a CSS file for styling
