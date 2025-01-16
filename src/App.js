@@ -4,7 +4,7 @@ import "./App.css";
 import axios from "axios";
 
 const socket = io.connect("https://familychat-app.vercel.app", {
-  transports: ['websocket'], // This ensures WebSocket transport is prioritized
+  transports: ['websocket', 'polling'], // Allow fallback to polling
 });
 
 const apiUrl = "https://familychat-app.vercel.app/api/data";
