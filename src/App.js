@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import io from "socket.io-client";
 import "./App.css";
 import axios from "axios";
@@ -25,7 +25,8 @@ function App() {
       });
   });
 
-  const getMessages = async () => {
+  // Memoize getMessages to prevent unnecessary re-creations of the function
+  const getMessages = useCallback(async () => {
     try {
       const response = await myPromise;
       console.log("response", response);
@@ -34,11 +35,11 @@ function App() {
       console.error("error", error);
       setApiData("Error occurred");
     }
-  };
+  }, []); // Empty dependency array, since getMessages doesn't depend on any other state or props
 
   useEffect(() => {
     getMessages();
-  }, []);
+  }, [getMessages]); // Now the dependency array includes getMessages
 
   // Setting up socket listeners
   useEffect(() => {
@@ -95,8 +96,6 @@ function App() {
       <h1>Chat</h1>
 
       <div className="messages">
-
-
         {messages.map((msg, index) => (
           <div
             key={index}
