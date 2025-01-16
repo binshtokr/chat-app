@@ -4,7 +4,7 @@ import "./App.css";
 import axios from "axios";
 
 const socket = io.connect("ws://familychat-app.vercel.app");
-const apiUrl = "ws://familychat-app.vercel.app/api/data";
+const apiUrl = "https://familychat-app.vercel.app/api/data";
 const myPromise = new Promise((resolve, reject) => {
   axios
     .get(apiUrl)
