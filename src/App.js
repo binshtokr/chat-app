@@ -3,7 +3,10 @@ import io from "socket.io-client";
 import "./App.css";
 import axios from "axios";
 
-const socket = io.connect("wss://familychat-app.vercel.app");
+const socket = io.connect("https://familychat-app.vercel.app", {
+  transports: ['websocket'], // This ensures WebSocket transport is prioritized
+});
+
 const apiUrl = "https://familychat-app.vercel.app/api/data";
 const myPromise = new Promise((resolve, reject) => {
   axios
