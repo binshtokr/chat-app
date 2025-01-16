@@ -64,6 +64,7 @@ function App() {
   const sendMessage = (e) => {
     e.preventDefault();
     if (message && room) {
+      
       socket.emit("send_message", { message, room });
       setMessages((prevMessages) => [
         ...prevMessages,
