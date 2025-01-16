@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
-import "./App.css"; // Assuming you have a CSS file for styling
+import "./App.css";
 import axios from "axios";
 
 const socket = io.connect("https://familychat-app.vercel.app");
@@ -12,15 +11,17 @@ function App() {
   const [room, setRoom] = useState("");
   const [apiData, setApiData] = useState("");
   const apiUrl = "https://familychat-app.vercel.app/api/data";
+
   const myPromise = new Promise((resolve, reject) => {
     axios
-      .get(apiUrl) // Der URL muss korrekt definiert sein
+      .get(apiUrl)
       .then((res) => {
         const data = res.data;
-        resolve(data); // Erfolg, Daten zurückgeben
+        resolve(data);
       })
       .catch((err) => {
-        reject("promise err", err); // Fehler, Fehler zurückgeben
+        console.error("Error in promise:", err);
+        reject(err);
       });
   });
 
@@ -39,6 +40,24 @@ function App() {
     getMessages();
   }, []);
 
+  // Setting up socket listeners
+  useEffect(() => {
+    // Setup the 'receive_message' listener
+    const handleReceiveMessage = (receivedMessage) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: receivedMessage, isMine: false },
+      ]);
+    };
+
+    socket.on("receive_message", handleReceiveMessage);
+
+    // Cleanup the socket listener when the component unmounts
+    return () => {
+      socket.off("receive_message", handleReceiveMessage);
+    };
+  }, []); // Empty dependency array means it will run once on mount
+
   const sendMessage = (e) => {
     e.preventDefault();
     if (message && room) {
@@ -50,19 +69,6 @@ function App() {
       setMessage("");
     }
   };
-
-  const setupSocketListeners = () => {
-    socket.on("receive_message", (receivedMessage) => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: receivedMessage, isMine: false },
-      ]);
-    });
-  };
-
-  if (!socket.hasListeners("receive_message")) {
-    setupSocketListeners();
-  }
 
   const joinRoom = (e) => {
     e.preventDefault();
@@ -89,17 +95,18 @@ function App() {
       <h1>Chat</h1>
 
       <div className="messages">
+
+
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`message ${
-              msg.isMine ? "my-message" : "partner-message"
-            }`}
+            className={`message ${msg.isMine ? "my-message" : "partner-message"}`}
           >
             {msg.text}
           </div>
         ))}
       </div>
+
       <form onSubmit={sendMessage} className="message-form">
         <input
           type="text"
@@ -108,7 +115,6 @@ function App() {
         />
         <button type="submit">Send</button>
       </form>
-      {/*       {number} */}
     </div>
   );
 }
