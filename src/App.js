@@ -4,26 +4,25 @@ import "./App.css";
 import axios from "axios";
 
 const socket = io.connect("https://familychat-app.vercel.app");
+const apiUrl = "https://familychat-app.vercel.app/api/data";
+const myPromise = new Promise((resolve, reject) => {
+  axios
+    .get(apiUrl)
+    .then((res) => {
+      const data = res.data;
+      resolve(data);
+    })
+    .catch((err) => {
+      console.error("Error in promise:", err);
+      reject(err);
+    });
+});
 
 function App() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [room, setRoom] = useState("");
   const [apiData, setApiData] = useState("");
-  const apiUrl = "https://familychat-app.vercel.app/api/data";
-
-  const myPromise = new Promise((resolve, reject) => {
-    axios
-      .get(apiUrl)
-      .then((res) => {
-        const data = res.data;
-        resolve(data);
-      })
-      .catch((err) => {
-        console.error("Error in promise:", err);
-        reject(err);
-      });
-  });
 
   // Memoize getMessages to prevent unnecessary re-creations of the function
   const getMessages = useCallback(async () => {
@@ -99,7 +98,9 @@ function App() {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`message ${msg.isMine ? "my-message" : "partner-message"}`}
+            className={`message ${
+              msg.isMine ? "my-message" : "partner-message"
+            }`}
           >
             {msg.text}
           </div>
